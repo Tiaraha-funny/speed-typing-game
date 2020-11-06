@@ -63,39 +63,56 @@
 //-------------------------8-------------------------
 /**
  * Challenge:
- * 
- * Make the input box focus (DOM elements have a method called .focus()) 
+ *
+ * Make the input box focus (DOM elements have a method called .focus())
  * immediately when the game starts
  */
-
-import React from "react";
-import useSpeedTyping from "./useSpeedTyping";
-
-const time = "https://scrimba.com/p/p7P5Hd/cW8Jdfy";
-
-const disableBtn = "https://www.google.com/search?q=Disable+button+in+react";
+import React, { useEffect, useState } from "react";
 
 function App() {
+  const [text, setText] = useState("");
+  const [timeRemaining, setTimeRemaining] = useState(10);
+  const [wordCount, setWordCount] = useState(0);
+  const [startTiming, setStartTiming] = useState(false);
 
-  const [text, setText, timeRemaining, runTiming, wordCount, refContainer, changeTime, startGame ] = useSpeedTyping();
+  const handleChange = (e) => {
+    const { value } = e.target;
+    setText(value);
+  };
+
+  const calculateNumOfWords = (text) => {
+    const words = text.split(" ");
+    console.log(words.length);
+  };
+
+  const startTimer = () => {
+    setStartTiming(true);
+  };
+
+  const endTiming = () => {
+    setStartTiming(false);
+    setWordCount(calculateNumOfWords(text));
+  };
+
+  useEffect(() => {
+    if (timeRemaining > 0) {
+      setTimeout(() => {
+        setTimeRemaining((time) => time - 1);
+      }, 1000);
+    } else if (timeRemaining === 0) {
+      endTiming();
+    }
+  }, [timeRemaining]);
+
+  console.log(text);
 
   return (
     <main>
-      <header>
-        <h1>Build The Basic Structure Of Our Game</h1>
-      </header>
-      <textarea ref={refContainer} disabled={!runTiming} onChange={changeTime} value={text} />
-      <div>
-        <h4>Time remaining: {timeRemaining}</h4>
-      </div>
-      <p>
-        <button disabled={runTiming} onClick={startGame}>
-          Start
-        </button>
-      </p>
-      <article>
-        <h1>Display count:{wordCount}</h1>
-      </article>
+      <h1>Build the basic structure of our game</h1>
+      <textarea onChange={handleChange} value={text} />
+      <h4>Time remaining: {timeRemaining}</h4>
+      <button onClick={startTimer}>Start game</button>
+      <h1>Words count: </h1>
     </main>
   );
 }
